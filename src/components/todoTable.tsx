@@ -120,7 +120,7 @@ const TodoTable = ({ todos }: any) => {
           gutterBottom
           sx={{ fontWeight: "bold", mb: 4 }}
         >
-          📝 Todo Grid
+          🚀 Task Launchpad
         </Typography>
 
         <Box display="flex" justifyContent="center" mb={4}>
