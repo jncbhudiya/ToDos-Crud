@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { TextField, Button, Container, Typography, Box } from "@mui/material";
-import axios from "axios";
+import { addTodo } from "../api/todosApi";
+import { Todo } from "../types/todoTypes";
 
 interface AddTodoProps {
   onClose: () => void;
-  setTodos?: React.Dispatch<React.SetStateAction<any[]>>;
+  setTodos?: React.Dispatch<React.SetStateAction<Todo[]>>;
 }
 
 export default function AddTodo({ onClose, setTodos }: AddTodoProps) {
@@ -12,27 +13,15 @@ export default function AddTodo({ onClose, setTodos }: AddTodoProps) {
   const [status, setStatus] = useState("pending");
 
   const handleAddTodo = async () => {
-    if (todoText?.trim() === "") {
+    if (todoText.trim() === "") {
       alert("Todo text cannot be empty!");
       return;
     }
 
     try {
-      const response = await axios.post("https://dummyjson.com/todos/add", {
-        todo: todoText,
-        completed: status === "completed",
-        userId: 1,
-      });
-
-      // alert("Todo successfully created!");
+      const response = await addTodo(todoText, status);
+      setTodos?.((prev) => [...prev, response]);
       setTodoText("");
-
-      // Update the todos list in the parent component
-      if (setTodos) {
-        setTodos((prev) => [...prev, response.data]);
-      }
-
-      // Close the modal
       onClose();
     } catch (error) {
       alert("Failed to create the todo. Please try again.");

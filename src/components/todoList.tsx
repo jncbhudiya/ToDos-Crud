@@ -13,6 +13,7 @@ import TodoTable from "../components/todoTable";
 import AddTodo from "../components/addTodo";
 import AddIcon from "@mui/icons-material/Add";
 import { green } from "@mui/material/colors";
+import { getTodos } from "../api/todosApi";
 
 export default function TodosList() {
   const [todos, setTodos] = useState<any[]>([]);
@@ -22,10 +23,8 @@ export default function TodosList() {
   useEffect(() => {
     const fetchTodos = async () => {
       try {
-        const response = await axios.get(
-          "https://dummyjson.com/todos?limit=100&skip=0"
-        );
-        setTodos(response.data?.todos);
+        const todos = await getTodos();
+        setTodos(todos);
       } catch (error) {
         console.error("Error fetching todos:", error);
       } finally {

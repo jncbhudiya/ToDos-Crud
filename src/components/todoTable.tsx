@@ -28,6 +28,7 @@ import Notification from "./notification";
 import { useNavigate } from "react-router-dom";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import SearchIcon from "@mui/icons-material/Search";
+import { deleteTodo, updateTodo } from "../api/todosApi";
 const TodoTable = ({ todos }: any) => {
   //states
   const [open, setOpen] = useState(false);
@@ -59,9 +60,8 @@ const TodoTable = ({ todos }: any) => {
   //delete todo frome existing data
   const handleDeleteConfirmed = async () => {
     try {
-      const response = await axios.delete(
-        `https://dummyjson.com/todos/${todoToDelete?.id}`
-      );
+      await deleteTodo(todoToDelete.id);
+
       const filteredTodos = selectedTodos.filter(
         (todo: any) => todo.id !== todoToDelete?.id
       );
@@ -80,26 +80,23 @@ const TodoTable = ({ todos }: any) => {
   };
 
   //save edited todo
-  const handleSave = (updatedTitle: string, updatedStatus: boolean) => {
-    axios
-      .put(`https://dummyjson.com/todos/${currentTodo?.id}`, {
-        todo: updatedTitle,
-        completed: updatedStatus,
-      })
-      .then((response) => {
-        console.log("API Response:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error updating todo:", error);
-      });
+  const handleSave = async (updatedTitle: string, updatedStatus: boolean) => {
+    if (!currentTodo) return;
 
-    const updatedTodos = selectedTodos.map((todo: any) =>
-      todo.id === currentTodo.id
-        ? { ...todo, todo: updatedTitle, completed: updatedStatus }
-        : todo
-    );
-    setSelectedTodos(updatedTodos);
+    try {
+      await updateTodo(currentTodo.id, updatedTitle, updatedStatus);
+
+      const updatedTodos = selectedTodos.map((todo: any) =>
+        todo.id === currentTodo.id
+          ? { ...todo, todo: updatedTitle, completed: updatedStatus }
+          : todo
+      );
+      setSelectedTodos(updatedTodos);
+    } catch (error) {
+      console.error("Failed to save the updated todo.");
+    }
   };
+
   useEffect(() => {
     setSelectedTodos(todos);
   }, [todos]);

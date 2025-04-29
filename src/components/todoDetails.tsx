@@ -15,6 +15,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import EditIcon from "@mui/icons-material/DriveFileRenameOutline";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { getTodoById } from "../api/todosApi";
 
 interface Todo {
   id: number;
@@ -36,10 +37,8 @@ export default function TodoDetails() {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get<Todo>(
-        `https://dummyjson.com/todos/${id}`
-      );
-      setTodo(response.data);
+      const response = await getTodoById(id);
+      setTodo(response);
     } catch (err) {
       setError("Failed to fetch todo details");
       console.error("Error fetching todo:", err);
