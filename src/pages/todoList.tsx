@@ -64,7 +64,6 @@ export default function TodosPage() {
             </Fab>
           </Box>
           <TodoTable todos={todos} />
-          {/* Plus Button */}
 
           {/* Modal for AddTodo */}
           <Modal

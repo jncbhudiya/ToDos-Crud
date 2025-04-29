@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -100,6 +100,9 @@ const TodoTable = ({ todos }: any) => {
     );
     setSelectedTodos(updatedTodos);
   };
+  useEffect(() => {
+    setSelectedTodos(todos);
+  }, [todos]);
 
   return (
     <>
