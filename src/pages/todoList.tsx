@@ -54,8 +54,6 @@ export default function TodosPage() {
         </Container>
       ) : todos.length > 0 ? (
         <>
-          <TodoTable todos={todos} />
-          {/* Plus Button */}
           <Box sx={{ position: "fixed", bottom: 20, right: 20, zIndex: 1300 }}>
             <Fab
               color="primary"
@@ -65,6 +63,8 @@ export default function TodosPage() {
               <AddIcon />
             </Fab>
           </Box>
+          <TodoTable todos={todos} />
+          {/* Plus Button */}
 
           {/* Modal for AddTodo */}
           <Modal

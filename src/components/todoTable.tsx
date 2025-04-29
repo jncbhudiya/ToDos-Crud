@@ -80,10 +80,11 @@ const TodoTable = ({ todos }: any) => {
   };
 
   //save edited todo
-  const handleSave = (updatedTitle: string) => {
-    const data = axios
+  const handleSave = (updatedTitle: string, updatedStatus: boolean) => {
+    axios
       .put(`https://dummyjson.com/todos/${currentTodo?.id}`, {
-        completed: false,
+        todo: updatedTitle,
+        completed: updatedStatus,
       })
       .then((response) => {
         console.log("API Response:", response.data);
@@ -93,30 +94,43 @@ const TodoTable = ({ todos }: any) => {
       });
 
     const updatedTodos = selectedTodos.map((todo: any) =>
-      todo.id === currentTodo.id ? { ...todo, todo: updatedTitle } : todo
+      todo.id === currentTodo.id
+        ? { ...todo, todo: updatedTitle, completed: updatedStatus }
+        : todo
     );
     setSelectedTodos(updatedTodos);
   };
 
   return (
     <>
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h5" align="center" mb={5} gutterBottom>
-          Todo Grid
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Typography
+          variant="h4"
+          align="center"
+          gutterBottom
+          sx={{ fontWeight: "bold", mb: 4 }}
+        >
+          📝 Todo Grid
         </Typography>
-        <Box display="flex" justifyContent="center" mb={3}>
+
+        <Box display="flex" justifyContent="center" mb={4}>
           <TextField
             variant="outlined"
-            placeholder="Search by title..."
+            placeholder="Search todos..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            sx={{ width: "100%" }}
+            sx={{ width: "100%", maxWidth: 500 }}
             InputProps={{
-              startAdornment: <SearchIcon color="action" sx={{ mr: 1 }} />,
+              startAdornment: (
+                <Box sx={{ display: "flex", alignItems: "center", mr: 1 }}>
+                  <SearchIcon color="action" />
+                </Box>
+              ),
             }}
           />
         </Box>
-        <Grid container spacing={3}>
+
+        <Grid container spacing={4}>
           {paginatedTodos?.map((todo: any) => (
             <Grid size={{ xs: 12, md: 4, sm: 6 }} key={todo.id}>
               <Card
@@ -124,17 +138,23 @@ const TodoTable = ({ todos }: any) => {
                   height: "100%",
                   display: "flex",
                   flexDirection: "column",
+                  transition: "0.3s",
+                  "&:hover": {
+                    transform: "scale(1.02)",
+                    boxShadow: 6,
+                  },
                   cursor: "pointer",
                 }}
                 onClick={() => navigate(`/todos/${todo?.id}`)}
               >
                 <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6"> {todo.id}</Typography>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    ID: {todo.id}
+                  </Typography>
                   <Typography
                     variant="h6"
-                    component="div"
-                    gutterBottom
                     sx={{
+                      mt: 1,
                       fontWeight: 500,
                       overflow: "hidden",
                       display: "-webkit-box",
@@ -146,15 +166,16 @@ const TodoTable = ({ todos }: any) => {
                     {todo.todo}
                   </Typography>
                 </CardContent>
-
                 <CardActions
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
+                    px: 2,
+                    pb: 2,
                   }}
                 >
-                  <Box sx={{ display: "flex", gap: 2 }}>
+                  <Box sx={{ display: "flex", gap: 1.5 }}>
                     <Button
                       variant="outlined"
                       size="small"
@@ -190,21 +211,25 @@ const TodoTable = ({ todos }: any) => {
             </Grid>
           ))}
         </Grid>
-      </Box>
+
+        <Box mt={4}>
+          <TablePagination
+            rowsPerPageOptions={[10]}
+            component="div"
+            count={filteredTodos.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+          />
+        </Box>
+      </Container>
 
       {/* open modals */}
 
-      <TablePagination
-        rowsPerPageOptions={[10]}
-        component="div"
-        count={todos.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-      />
       <NestedModal
         open={open}
         setOpen={setOpen}
+        todoStatus={currentTodo?.completed}
         todoTitle={currentTodo?.todo}
         onSave={handleSave}
       />

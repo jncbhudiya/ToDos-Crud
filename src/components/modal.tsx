@@ -1,9 +1,6 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
+import { Box, Modal, Button, TextField, Typography } from "@mui/material";
 
 const style = {
   position: "absolute",
@@ -19,52 +16,74 @@ const style = {
   pb: 3,
 };
 
-//mui nested modal
-
-export default function NestedModal({ open, setOpen, todoTitle, onSave }: any) {
+export default function NestedModal({
+  open,
+  setOpen,
+  todoTitle,
+  todoStatus,
+  onSave,
+}: any) {
   const [title, setTitle] = useState(todoTitle || "");
+  const [status, setStatus] = useState(todoStatus ? "completed" : "pending");
 
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleSave = () => {
-    onSave(title);
+    onSave(title, status === "completed"); // ✅ pass updated title & status
     handleClose();
   };
 
   useEffect(() => {
     setTitle(todoTitle || "");
-  }, [todoTitle]);
+    setStatus(todoStatus ? "completed" : "pending");
+  }, [todoTitle, todoStatus]);
 
   return (
-    <div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="edit-todo-modal-title"
-        aria-describedby="edit-todo-modal-description"
-      >
-        <Box sx={{ ...style, width: 400 }}>
-          <h2 id="edit-todo-modal-title">Edit Todo</h2>
-          <TextField
-            fullWidth
-            label="Todo Title"
-            variant="outlined"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            sx={{ mb: 2 }}
-          />
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Button variant="outlined" color="error" onClick={handleClose}>
-              Cancel
-            </Button> 
-            <Button variant="contained" color="primary" onClick={handleSave}>
-              Save
-            </Button>
-          </Box>
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="edit-todo-modal-title"
+    >
+      <Box sx={style}>
+        <Typography id="edit-todo-modal-title" variant="h6" gutterBottom>
+          Edit Todo
+        </Typography>
+        <TextField
+          fullWidth
+          label="Todo Title"
+          variant="outlined"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          sx={{ mb: 2 }}
+        />
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="subtitle1">Status:</Typography>
+          <Button
+            variant={status === "pending" ? "contained" : "outlined"}
+            onClick={() => setStatus("pending")}
+            sx={{ mr: 1, mt: 1 }}
+          >
+            Pending
+          </Button>
+          <Button
+            variant={status === "completed" ? "contained" : "outlined"}
+            onClick={() => setStatus("completed")}
+            sx={{ mt: 1 }}
+          >
+            Completed
+          </Button>
         </Box>
-      </Modal>
-    </div>
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Button variant="outlined" color="error" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="contained" color="primary" onClick={handleSave}>
+            Save
+          </Button>
+        </Box>
+      </Box>
+    </Modal>
   );
 }
