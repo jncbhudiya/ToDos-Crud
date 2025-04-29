@@ -13,9 +13,10 @@ import { Todo } from "../types/todoTypes";
 interface AddTodoProps {
   onClose: () => void;
   setTodos?: React.Dispatch<React.SetStateAction<Todo[]>>;
+  todos?: Todo[];
 }
 
-export default function AddTodo({ onClose, setTodos }: AddTodoProps) {
+export default function AddTodo({ onClose, setTodos, todos }: AddTodoProps) {
   const [todoText, setTodoText] = useState("");
   const [status, setStatus] = useState("pending");
   const [loading, setLoading] = useState(false);
@@ -28,7 +29,11 @@ export default function AddTodo({ onClose, setTodos }: AddTodoProps) {
     try {
       setLoading(true);
       const response = await addTodo(todoText, status);
-      const newTodoWithId = { ...response, id: Date.now() };
+
+      const maxId =
+        todos && todos.length > 0 ? Math.max(...todos.map((t) => t.id)) : 0;
+
+      const newTodoWithId = { ...response, id: maxId + 1 };
 
       setTodos?.((prev) => [...prev, newTodoWithId]);
       setTodoText("");

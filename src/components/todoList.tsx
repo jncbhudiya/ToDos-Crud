@@ -67,7 +67,11 @@ export default function TodosList() {
                 borderRadius: 1,
               }}
             >
-              <AddTodo onClose={handleClose} setTodos={setTodos} />
+              <AddTodo
+                onClose={handleClose}
+                setTodos={setTodos}
+                todos={todos}
+              />
             </Box>
           </Modal>
         </>
