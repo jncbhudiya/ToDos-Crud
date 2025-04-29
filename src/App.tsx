@@ -11,12 +11,14 @@ import TodosPage from "./pages/todoList";
 import { Button, Container } from "@mui/material";
 import Home from "./components/home";
 import GlobalLoader from "./components/GlobalLoader";
+import Notification from "./components/notification";
 
 function App() {
   return (
     <div className="App">
       <Router>
         <GlobalLoader />
+        <Notification />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/todos" element={<TodosPage />} />

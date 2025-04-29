@@ -243,11 +243,11 @@ const TodoTable = ({ todos }: any) => {
         todoTitle={currentTodo?.todo}
         onSave={handleSave}
       />
-      <Notification
+      {/* <Notification
         notifiMessage={"Successfully Deleted"}
         notifi={notifi}
         setNotifi={setNotifi}
-      />
+      /> */}
       <ConfirmDeleteModal
         open={deleteConfirmOpen}
         onClose={() => setDeleteConfirmOpen(false)}

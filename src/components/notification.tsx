@@ -1,38 +1,28 @@
-import * as React from "react";
-import Button from "@mui/material/Button";
-import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
+// notification.tsx
+import React from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-//deleted notification
-
-export default function Notification({
-  notifi,
-  setNotifi,
-  notifiMessage,
-}: any) {
-  const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setNotifi(false);
-  };
-
+export default function Notification() {
   return (
-    <div>
-      <Snackbar open={notifi} autoHideDuration={6000} onClose={handleClose}>
-        <Alert
-          onClose={handleClose}
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {notifiMessage}
-        </Alert>
-      </Snackbar>
-    </div>
+    <ToastContainer
+      position="top-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+    />
   );
 }
+
+// Export toast function to be used elsewhere
+export const showNotification = (
+  message: string,
+  type: "success" | "error" | "info" | "warning" = "success"
+) => {
+  toast[type](message);
+};
