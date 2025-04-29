@@ -13,6 +13,10 @@ import {
   Box,
   Grid,
   Container,
+  CardContent,
+  CardActions,
+  Card,
+  Chip,
 } from "@mui/material";
 
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
@@ -88,50 +92,71 @@ const TodoTable = ({ todos }: any) => {
         </Typography>
         <Grid container spacing={3}>
           {paginatedTodos?.map((todo: any) => (
-            <Grid size={{ xs: 2, sm: 4, md: 4 }} key={todo.id}>
-              <Box
+            <Grid size={{ xs: 12, md: 4, sm: 6 }} key={todo.id}>
+              <Card
+                sx={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  cursor: "pointer",
+                }}
                 onClick={() => navigate(`/todos/${todo?.id}`)}
-                sx={styles.cardBox}
               >
-                <Box sx={styles.idBox}>ID: {todo.id}</Box>
-
-                <Typography variant="h6" sx={styles.title}>
-                  {todo.todo}
-                </Typography>
-
-                <Box sx={{ marginTop: "auto" }}>
+                <CardContent sx={{ flexGrow: 1 }}>
                   <Typography
-                    variant="body2"
-                    color={todo.completed ? "success.main" : "error.main"}
-                    sx={styles.status}
+                    variant="h6"
+                    component="div"
+                    gutterBottom
+                    sx={{
+                      fontWeight: 500,
+                      overflow: "hidden",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      textOverflow: "ellipsis",
+                    }}
                   >
-                    {todo.completed ? "Completed" : "Pending"}
+                    {todo.todo}
                   </Typography>
+                </CardContent>
 
-                  <Box sx={styles.buttonContainer}>
+                <CardActions
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Box>
                     <Button
+                      size="small"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleEdit(todo);
                       }}
                       startIcon={<DriveFileRenameOutlineIcon />}
-                      sx={{ mr: 2 }}
                     >
                       Edit
                     </Button>
                     <Button
+                      size="small"
+                      color="error"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDelete(todo.id);
                       }}
                       startIcon={<DeleteOutlineIcon />}
-                      color="error"
                     >
                       Delete
                     </Button>
                   </Box>
-                </Box>
-              </Box>
+                  <Chip
+                    label={todo.completed ? "Completed" : "Pending"}
+                    color={todo.completed ? "success" : "error"}
+                    size="small"
+                  />
+                </CardActions>
+              </Card>
             </Grid>
           ))}
         </Grid>

@@ -1,8 +1,13 @@
 import React, { useState } from "react";
-import { TextField, Button, Container, Typography } from "@mui/material";
+import { TextField, Button, Container, Typography, Box } from "@mui/material";
 import axios from "axios";
 
-export default function AddTodo() {
+interface AddTodoProps {
+  onClose: () => void;
+  setTodos?: React.Dispatch<React.SetStateAction<any[]>>;
+}
+
+export default function AddTodo({ onClose, setTodos }: AddTodoProps) {
   const [todoText, setTodoText] = useState("");
   const [status, setStatus] = useState("pending");
 
@@ -18,15 +23,24 @@ export default function AddTodo() {
         completed: status === "completed",
         userId: 1,
       });
-      alert("Todo successfully created!");
+
+      // alert("Todo successfully created!");
       setTodoText("");
+
+      // Update the todos list in the parent component
+      if (setTodos) {
+        setTodos((prev) => [...prev, response.data]);
+      }
+
+      // Close the modal
+      onClose();
     } catch (error) {
       alert("Failed to create the todo. Please try again.");
     }
   };
 
   return (
-    <Container sx={{ mt: 4 }}>
+    <Container sx={{ mt: 2 }}>
       <Typography variant="h6" gutterBottom>
         Create a New Todo
       </Typography>
@@ -51,14 +65,14 @@ export default function AddTodo() {
       >
         Set as Completed
       </Button>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleAddTodo}
-        sx={{ mt: 2, display: "block" }}
-      >
-        Add Todo
-      </Button>
+      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
+        <Button variant="outlined" color="secondary" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button variant="contained" color="primary" onClick={handleAddTodo}>
+          Add Todo
+        </Button>
+      </Box>
     </Container>
   );
 }

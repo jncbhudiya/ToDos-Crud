@@ -6,6 +6,7 @@ import {
   Box,
   Fab,
   Button,
+  Modal,
 } from "@mui/material";
 import axios from "axios";
 import TodoTable from "../components/todoTable";
@@ -14,9 +15,10 @@ import AddIcon from "@mui/icons-material/Add";
 import { green } from "@mui/material/colors";
 
 export default function TodosPage() {
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAddTodo, setShowAddTodo] = useState(true);
+  const [openAddTodo, setOpenAddTodo] = useState(false);
+
   useEffect(() => {
     const fetchTodos = async () => {
       try {
@@ -33,6 +35,10 @@ export default function TodosPage() {
     fetchTodos();
   }, []);
 
+  const handleClose = () => {
+    setOpenAddTodo(false);
+  };
+
   return (
     <Container sx={{ mt: 4 }}>
       {loading ? (
@@ -48,18 +54,41 @@ export default function TodosPage() {
         </Container>
       ) : todos.length > 0 ? (
         <>
-          {showAddTodo && <AddTodo />}
           <TodoTable todos={todos} />
           {/* Plus Button */}
           <Box sx={{ position: "fixed", bottom: 20, right: 20, zIndex: 1300 }}>
             <Fab
               color="primary"
               aria-label="add"
-              onClick={() => setShowAddTodo(!showAddTodo)}
+              onClick={() => setOpenAddTodo(true)}
             >
               <AddIcon />
             </Fab>
           </Box>
+
+          {/* Modal for AddTodo */}
+          <Modal
+            open={openAddTodo}
+            onClose={handleClose}
+            aria-labelledby="add-todo-modal"
+            aria-describedby="add-new-todo-item"
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: 400,
+                bgcolor: "background.paper",
+                boxShadow: 24,
+                p: 4,
+                borderRadius: 1,
+              }}
+            >
+              <AddTodo onClose={handleClose} setTodos={setTodos} />
+            </Box>
+          </Modal>
         </>
       ) : (
         <Typography variant="h6" align="center" color="error">
