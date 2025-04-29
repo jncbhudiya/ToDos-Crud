@@ -37,6 +37,6 @@ export const updateTodo = async (
 
 export const deleteTodo = async (id: number) => {
   const response = await axios.delete(`${BASE_URL}/todos/${id}`);
-  console.log("Delete response:", response.data); // Log the response data
+  console.log("Delete response:", response.data);
   return response.data;
 };

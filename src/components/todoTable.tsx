@@ -17,6 +17,7 @@ import {
   CardActions,
   Card,
   Chip,
+  TextField,
 } from "@mui/material";
 
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
@@ -25,21 +26,29 @@ import NestedModal from "./modal";
 import axios from "axios";
 import Notification from "./notification";
 import { useNavigate } from "react-router-dom";
-
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
+import SearchIcon from "@mui/icons-material/Search";
 const TodoTable = ({ todos }: any) => {
   //states
   const [open, setOpen] = useState(false);
   const [notifi, setNotifi] = useState(false);
   const [selectedTodos, setSelectedTodos] = useState(todos);
   const [currentTodo, setCurrentTodo] = useState<any>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [todoToDelete, setTodoToDelete] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const [page, setPage] = useState(0);
   const rowsPerPage = 10;
 
   const handleChangePage = (event: any, newPage: any) => {
     setPage(newPage);
   };
+  const filteredTodos = selectedTodos.filter((todo: any) =>
+    todo.todo.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const paginatedTodos = selectedTodos?.slice(
+  const paginatedTodos = filteredTodos?.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
@@ -48,12 +57,17 @@ const TodoTable = ({ todos }: any) => {
   const navigate = useNavigate();
 
   //delete todo frome existing data
-  const handleDelete = async (id: number) => {
+  const handleDeleteConfirmed = async () => {
     try {
-      const response = await axios.delete(`https://dummyjson.com/todos/${id}`);
-      const filteredTodos = selectedTodos.filter((todo: any) => todo.id !== id);
+      const response = await axios.delete(
+        `https://dummyjson.com/todos/${todoToDelete?.id}`
+      );
+      const filteredTodos = selectedTodos.filter(
+        (todo: any) => todo.id !== todoToDelete?.id
+      );
       setNotifi(true);
       setSelectedTodos(filteredTodos);
+      setDeleteConfirmOpen(false);
     } catch (error) {
       console.error("Error deleting todos:", error);
     }
@@ -90,6 +104,18 @@ const TodoTable = ({ todos }: any) => {
         <Typography variant="h5" align="center" mb={5} gutterBottom>
           Todo Grid
         </Typography>
+        <Box display="flex" justifyContent="center" mb={3}>
+          <TextField
+            variant="outlined"
+            placeholder="Search by title..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{ width: "100%" }}
+            InputProps={{
+              startAdornment: <SearchIcon color="action" sx={{ mr: 1 }} />,
+            }}
+          />
+        </Box>
         <Grid container spacing={3}>
           {paginatedTodos?.map((todo: any) => (
             <Grid size={{ xs: 12, md: 4, sm: 6 }} key={todo.id}>
@@ -103,6 +129,7 @@ const TodoTable = ({ todos }: any) => {
                 onClick={() => navigate(`/todos/${todo?.id}`)}
               >
                 <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography variant="h6"> {todo.id}</Typography>
                   <Typography
                     variant="h6"
                     component="div"
@@ -127,8 +154,9 @@ const TodoTable = ({ todos }: any) => {
                     alignItems: "center",
                   }}
                 >
-                  <Box>
+                  <Box sx={{ display: "flex", gap: 2 }}>
                     <Button
+                      variant="outlined"
                       size="small"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -139,11 +167,13 @@ const TodoTable = ({ todos }: any) => {
                       Edit
                     </Button>
                     <Button
+                      variant="outlined"
                       size="small"
                       color="error"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDelete(todo.id);
+                        setTodoToDelete(todo);
+                        setDeleteConfirmOpen(true);
                       }}
                       startIcon={<DeleteOutlineIcon />}
                     >
@@ -152,7 +182,7 @@ const TodoTable = ({ todos }: any) => {
                   </Box>
                   <Chip
                     label={todo.completed ? "Completed" : "Pending"}
-                    color={todo.completed ? "success" : "error"}
+                    color={todo.completed ? "success" : "warning"}
                     size="small"
                   />
                 </CardActions>
@@ -183,54 +213,13 @@ const TodoTable = ({ todos }: any) => {
         notifi={notifi}
         setNotifi={setNotifi}
       />
+      <ConfirmDeleteModal
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        onConfirm={handleDeleteConfirmed}
+      />
     </>
   );
 };
 
 export default TodoTable;
-
-//styles
-
-const styles = {
-  cardBox: {
-    borderRadius: 4,
-    position: "relative",
-    padding: 3,
-    boxShadow: 1,
-    height: "250px",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    transition: "transform 0.2s ease",
-    "&:hover": {
-      transform: "scale(1.05)",
-      boxShadow: 3,
-      cursor: "pointer",
-    },
-  },
-  idBox: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    fontSize: "0.8rem",
-    zIndex: 1,
-  },
-  title: {
-    fontWeight: "400",
-    fontSize: "1.05rem",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "normal", // Allow text to wrap if it overflows
-    display: "block", // Make it behave like a block element
-  },
-  status: {
-    textAlign: "right",
-    marginBottom: 2,
-    marginRight: 2,
-  },
-  buttonContainer: {
-    display: "flex",
-    zIndex: 1,
-    justifyContent: "space-between",
-  },
-};

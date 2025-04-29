@@ -5,66 +5,136 @@ import {
   Typography,
   Card,
   CardContent,
+  Button,
+  Box,
+  Alert,
+  Chip,
+  Divider,
 } from "@mui/material";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import EditIcon from "@mui/icons-material/DriveFileRenameOutline";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+interface Todo {
+  id: number;
+  todo: string;
+  completed: boolean;
+  userId?: number;
+}
 
 export default function TodoDetails() {
-  //manage states
-  const [todo, setTodo] = useState<any>(null);
+  const [todo, setTodo] = useState<Todo | null>(null);
   const [loading, setLoading] = useState(true);
-  // const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  const { id } = useParams(); // Extract the dynamic "id" from the URL
-
-  //fetch todo
   const fetchTodo = async () => {
     if (!id) return;
 
     try {
-      const response = await axios?.get(`https://dummyjson.com/todos/${id}`);
+      setLoading(true);
+      setError(null);
+      const response = await axios.get<Todo>(
+        `https://dummyjson.com/todos/${id}`
+      );
       setTodo(response.data);
-    } catch (error) {
-      console.error("Error fetching todo:", error);
+    } catch (err) {
+      setError("Failed to fetch todo details");
+      console.error("Error fetching todo:", err);
     } finally {
-      setLoading(false); //loading
+      setLoading(false);
     }
   };
 
-  //get todo detail by id
   useEffect(() => {
     fetchTodo();
   }, [id]);
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const handleEdit = () => {
+    navigate(`/todos/${id}/edit`);
+  };
+
   return (
-    <Container sx={{ mt: 4 }}>
+    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+      <Button startIcon={<ArrowBackIcon />} onClick={handleBack} sx={{ mb: 3 }}>
+        Back to List
+      </Button>
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+
       {loading ? (
-        <Container
-          sx={{
-            justifyContent: "center",
-            alignItems: "center",
-            display: "flex",
-            height: "80vh",
-          }}
-        >
-          <CircularProgress />
-        </Container>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
+          <CircularProgress size={60} />
+        </Box>
       ) : todo ? (
-        <Card sx={{ maxWidth: 600, mx: "auto", mt: 4, boxShadow: 3 }}>
+        <Card sx={{ boxShadow: 3 }}>
           <CardContent>
-            <Typography variant="h5" gutterBottom>
-              Todo Details
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 2,
+              }}
+            >
+              <Typography variant="h4" component="h1">
+                Todo Details
+              </Typography>
+              <Chip
+                label={todo.completed ? "Completed" : "Pending"}
+                color={todo.completed ? "success" : "warning"}
+              />
+            </Box>
+
+            <Divider sx={{ my: 2 }} />
+
+            <Typography variant="h6" sx={{ mb: 1 }}>
+              <h2>Title:</h2>
             </Typography>
-            <Typography variant="h6" color="textPrimary" gutterBottom>
-              Title: {todo.todo}
+            <Typography
+              variant="body1"
+              sx={{
+                mb: 3,
+                pl: 2,
+                fontStyle: todo.completed ? "italic" : "normal",
+                textDecoration: todo.completed ? "line-through" : "none",
+              }}
+            >
+              {todo.todo}
             </Typography>
-            <Typography variant="body1" color="textSecondary">
-              Status: {todo.completed ? "Completed" : "Pending"}
+
+            <Typography variant="h6" sx={{ mb: 1 }}>
+              <strong>Status:</strong>
             </Typography>
+            <Typography variant="body1" sx={{ pl: 2, mb: 3 }}>
+              {todo.completed
+                ? "This task has been completed"
+                : "This task is still pending"}
+            </Typography>
+
+            <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
+              <Button
+                variant="contained"
+                startIcon={<EditIcon />}
+                onClick={handleEdit}
+              >
+                Edit Todo
+              </Button>
+            </Box>
           </CardContent>
         </Card>
       ) : (
-        <Typography variant="h6" align="center" color="error" sx={{ mt: 4 }}>
+        <Typography variant="h6" align="center" sx={{ mt: 10 }}>
           Todo not found
         </Typography>
       )}
