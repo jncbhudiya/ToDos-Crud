@@ -1,6 +1,13 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { Box, Modal, Button, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Modal,
+  Button,
+  TextField,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 
 const style = {
   position: "absolute",
@@ -25,14 +32,22 @@ export default function NestedModal({
 }: any) {
   const [title, setTitle] = useState(todoTitle || "");
   const [status, setStatus] = useState(todoStatus ? "completed" : "pending");
+  const [loading, setLoading] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const handleSave = () => {
-    onSave(title, status === "completed"); // ✅ pass updated title & status
-    handleClose();
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      await onSave(title, status === "completed"); 
+      handleClose();
+    } catch (error) {
+      console.error("Error saving todo:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -57,6 +72,7 @@ export default function NestedModal({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           sx={{ mb: 2 }}
+          disabled={loading}
         />
         <Box sx={{ mb: 2 }}>
           <Typography variant="subtitle1">Status:</Typography>
@@ -64,6 +80,7 @@ export default function NestedModal({
             variant={status === "pending" ? "contained" : "outlined"}
             onClick={() => setStatus("pending")}
             sx={{ mr: 1, mt: 1 }}
+            disabled={loading}
           >
             Pending
           </Button>
@@ -71,16 +88,32 @@ export default function NestedModal({
             variant={status === "completed" ? "contained" : "outlined"}
             onClick={() => setStatus("completed")}
             sx={{ mt: 1 }}
+            disabled={loading}
           >
             Completed
           </Button>
         </Box>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Button variant="outlined" color="error" onClick={handleClose}>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={handleClose}
+            disabled={loading}
+          >
             Cancel
           </Button>
-          <Button variant="contained" color="primary" onClick={handleSave}>
-            Save
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSave}
+            disabled={loading}
+            startIcon={
+              loading ? (
+                <CircularProgress size={18} color="inherit" />
+              ) : undefined
+            }
+          >
+            {loading ? "Saving..." : "Save"}
           </Button>
         </Box>
       </Box>

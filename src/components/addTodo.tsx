@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { TextField, Button, Container, Typography, Box } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Container,
+  Typography,
+  Box,
+  CircularProgress,
+} from "@mui/material";
 import { addTodo } from "../api/todosApi";
 import { Todo } from "../types/todoTypes";
 
@@ -11,7 +18,7 @@ interface AddTodoProps {
 export default function AddTodo({ onClose, setTodos }: AddTodoProps) {
   const [todoText, setTodoText] = useState("");
   const [status, setStatus] = useState("pending");
-
+  const [loading, setLoading] = useState(false);
   const handleAddTodo = async () => {
     if (todoText.trim() === "") {
       alert("Todo text cannot be empty!");
@@ -19,12 +26,17 @@ export default function AddTodo({ onClose, setTodos }: AddTodoProps) {
     }
 
     try {
+      setLoading(true);
       const response = await addTodo(todoText, status);
-      setTodos?.((prev) => [...prev, response]);
+      const newTodoWithId = { ...response, id: Date.now() };
+
+      setTodos?.((prev) => [...prev, newTodoWithId]);
       setTodoText("");
       onClose();
     } catch (error) {
       alert("Failed to create the todo. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,21 +57,25 @@ export default function AddTodo({ onClose, setTodos }: AddTodoProps) {
         variant={status === "pending" ? "contained" : "outlined"}
         onClick={() => setStatus("pending")}
         sx={{ mr: 2 }}
+        disabled={loading}
       >
         Set as Pending
       </Button>
-      <Button
-        variant={status === "completed" ? "contained" : "outlined"}
-        onClick={() => setStatus("completed")}
-      >
-        Set as Completed
-      </Button>
+
       <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
         <Button variant="outlined" color="secondary" onClick={onClose}>
           Cancel
         </Button>
-        <Button variant="contained" color="primary" onClick={handleAddTodo}>
-          Add Todo
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleAddTodo}
+          disabled={loading}
+          startIcon={
+            loading ? <CircularProgress color="inherit" size={20} /> : undefined
+          }
+        >
+          {loading ? "Adding..." : "Add Todo"}
         </Button>
       </Box>
     </Container>

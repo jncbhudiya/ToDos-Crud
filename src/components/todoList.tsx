@@ -1,36 +1,29 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  CircularProgress,
-  Typography,
-  Box,
-  Fab,
-  Button,
-  Modal,
-} from "@mui/material";
-import axios from "axios";
+import { Container, Typography, Box, Fab, Modal } from "@mui/material";
 import TodoTable from "../components/todoTable";
 import AddTodo from "../components/addTodo";
 import AddIcon from "@mui/icons-material/Add";
-import { green } from "@mui/material/colors";
 import { getTodos } from "../api/todosApi";
+import { useLoader } from "../context/LoaderContext";
 
 export default function TodosList() {
   const [todos, setTodos] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [openAddTodo, setOpenAddTodo] = useState(false);
+  const { showLoader, hideLoader } = useLoader();
 
   useEffect(() => {
     const fetchTodos = async () => {
       try {
+        showLoader();
         const todos = await getTodos();
         setTodos(todos);
       } catch (error) {
         console.error("Error fetching todos:", error);
       } finally {
-        setLoading(false);
+        hideLoader();
       }
     };
+
     fetchTodos();
   }, []);
 
@@ -40,18 +33,8 @@ export default function TodosList() {
 
   return (
     <Container sx={{ mt: 4 }}>
-      {loading ? (
-        <Container
-          sx={{
-            justifyContent: "center",
-            alignItems: "center",
-            display: "flex",
-            height: "80vh",
-          }}
-        >
-          <CircularProgress />
-        </Container>
-      ) : todos.length > 0 ? (
+      {/* Render only when todos are available */}
+      {todos.length > 0 ? (
         <>
           <Box sx={{ position: "fixed", bottom: 20, right: 20, zIndex: 1300 }}>
             <Fab

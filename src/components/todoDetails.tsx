@@ -16,6 +16,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import EditIcon from "@mui/icons-material/DriveFileRenameOutline";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getTodoById } from "../api/todosApi";
+import { useLoader } from "../context/LoaderContext";
 
 interface Todo {
   id: number;
@@ -28,6 +29,7 @@ export default function TodoDetails() {
   const [todo, setTodo] = useState<Todo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { showLoader, hideLoader } = useLoader();
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -43,7 +45,7 @@ export default function TodoDetails() {
       setError("Failed to fetch todo details");
       console.error("Error fetching todo:", err);
     } finally {
-      setLoading(false);
+      hideLoader();
     }
   };
 
@@ -71,11 +73,7 @@ export default function TodoDetails() {
         </Alert>
       )}
 
-      {loading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
-          <CircularProgress size={60} />
-        </Box>
-      ) : todo ? (
+      {todo ? (
         <Card sx={{ boxShadow: 3 }}>
           <CardContent>
             <Box

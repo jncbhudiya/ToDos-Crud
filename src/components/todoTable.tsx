@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import SearchIcon from "@mui/icons-material/Search";
 import { deleteTodo, updateTodo } from "../api/todosApi";
+import { Todo } from "../types/todoTypes";
 const TodoTable = ({ todos }: any) => {
   //states
   const [open, setOpen] = useState(false);
@@ -81,19 +82,28 @@ const TodoTable = ({ todos }: any) => {
 
   //save edited todo
   const handleSave = async (updatedTitle: string, updatedStatus: boolean) => {
-    if (!currentTodo) return;
-
-    try {
-      await updateTodo(currentTodo.id, updatedTitle, updatedStatus);
-
-      const updatedTodos = selectedTodos.map((todo: any) =>
+    if (currentTodo.id >= 1000000000000) {
+      const updatedTodos = selectedTodos.map((todo: Todo) =>
         todo.id === currentTodo.id
           ? { ...todo, todo: updatedTitle, completed: updatedStatus }
           : todo
       );
       setSelectedTodos(updatedTodos);
-    } catch (error) {
-      console.error("Failed to save the updated todo.");
+      return;
+    }
+
+    try {
+      const updated = await updateTodo(
+        currentTodo.id,
+        updatedTitle,
+        updatedStatus
+      );
+      const updatedTodos = selectedTodos.map((todo: Todo) =>
+        todo.id === currentTodo.id ? updated : todo
+      );
+      setSelectedTodos(updatedTodos);
+    } catch (e) {
+      console.error("API update failed:", e);
     }
   };
 

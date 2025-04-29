@@ -10,11 +10,13 @@ import TodoDetails from "./pages/todoDetails";
 import TodosPage from "./pages/todoList";
 import { Button, Container } from "@mui/material";
 import Home from "./components/home";
+import GlobalLoader from "./components/GlobalLoader";
 
 function App() {
   return (
     <div className="App">
       <Router>
+        <GlobalLoader />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/todos" element={<TodosPage />} />
