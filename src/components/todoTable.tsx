@@ -18,55 +18,83 @@ import {
   Card,
   Chip,
   TextField,
+  ToggleButtonGroup,
+  ToggleButton,
+  ButtonGroup,
+  Menu,
+  MenuItem,
+  ListItemIcon,
 } from "@mui/material";
 
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import NestedModal from "./modal";
-import axios from "axios";
-import Notification from "./notification";
 import { useNavigate } from "react-router-dom";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import SearchIcon from "@mui/icons-material/Search";
 import { deleteTodo, updateTodo } from "../api/todosApi";
 import { Todo } from "../types/todoTypes";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import SwapVertIcon from "@mui/icons-material/SwapVert";
+import {
+  ArrowDownward,
+  ArrowUpward,
+  CheckCircle,
+  PendingActions,
+} from "@mui/icons-material";
+
 const TodoTable = ({ todos }: any) => {
-  //states
+  // states
   const [open, setOpen] = useState(false);
-  const [notifi, setNotifi] = useState(false);
   const [selectedTodos, setSelectedTodos] = useState(todos);
   const [currentTodo, setCurrentTodo] = useState<any>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState<any>(null);
+  const [showPendingFirst, setShowPendingFirst] = useState(true);
+
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "completed" | "pending"
+  >("all");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   const [page, setPage] = useState(0);
   const rowsPerPage = 10;
 
-  const handleChangePage = (event: any, newPage: any) => {
+  const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
-  const filteredTodos = selectedTodos.filter((todo: any) =>
-    todo.todo.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
-  const paginatedTodos = filteredTodos?.slice(
+  // Filter and sort todos
+  const filteredTodos = selectedTodos
+    .filter((todo: any) =>
+      todo.todo.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .filter((todo: any) => {
+      if (statusFilter === "all") return true;
+      return statusFilter === "completed" ? todo.completed : !todo.completed;
+    })
+    .sort((a: any, b: any) => {
+      if (showPendingFirst) {
+        return a.completed === b.completed ? 0 : a.completed ? 1 : -1;
+      } else {
+        return a.completed === b.completed ? 0 : a.completed ? -1 : 1;
+      }
+    });
+
+  const paginatedTodos = filteredTodos.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
 
-  //router objects
   const navigate = useNavigate();
 
-  //delete todo frome existing data
   const handleDeleteConfirmed = async () => {
     try {
       await deleteTodo(todoToDelete.id);
-
       const filteredTodos = selectedTodos.filter(
         (todo: any) => todo.id !== todoToDelete?.id
       );
-      setNotifi(true);
       setSelectedTodos(filteredTodos);
       setDeleteConfirmOpen(false);
     } catch (error) {
@@ -74,13 +102,11 @@ const TodoTable = ({ todos }: any) => {
     }
   };
 
-  //edit todo
   const handleEdit = (todo: any) => {
     setCurrentTodo(todo);
     setOpen(true);
   };
 
-  //save edited todo
   const handleSave = async (updatedTitle: string, updatedStatus: boolean) => {
     if (currentTodo.id >= 1000000000000) {
       const updatedTodos = selectedTodos.map((todo: Todo) =>
@@ -107,6 +133,34 @@ const TodoTable = ({ todos }: any) => {
     }
   };
 
+  const handleStatusFilterChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newFilter: "all" | "completed" | "pending"
+  ) => {
+    if (newFilter !== null) {
+      setStatusFilter(newFilter);
+      setPage(0); // Reset to first page when filter changes
+    }
+  };
+  const [sortAnchorEl, setSortAnchorEl] = useState<null | HTMLElement>(null);
+  const sortOpen = Boolean(sortAnchorEl);
+
+  const handleSortClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setSortAnchorEl(event.currentTarget);
+  };
+  const handleSortClose = () => {
+    setSortAnchorEl(null);
+  };
+
+  const handleSortSelection = (option: "pendingFirst" | "completedFirst") => {
+    setShowPendingFirst(option === "pendingFirst");
+    setPage(0);
+    handleSortClose();
+  };
+  const toggleSortOrder = () => {
+    setShowPendingFirst(!showPendingFirst);
+    setPage(0); // Reset to first page when sort changes
+  };
   useEffect(() => {
     setSelectedTodos(todos);
   }, [todos]);
@@ -123,13 +177,22 @@ const TodoTable = ({ todos }: any) => {
           🚀 Task Launchpad
         </Typography>
 
-        <Box display="flex" justifyContent="center" mb={4}>
+        {/* Search and Filter Section */}
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          mb={4}
+          alignItems="center"
+        >
           <TextField
             variant="outlined"
             placeholder="Search todos..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            sx={{ width: "100%", maxWidth: 500 }}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(0); // Reset to first page when search changes
+            }}
+            sx={{ width: "100%", maxWidth: 400 }}
             InputProps={{
               startAdornment: (
                 <Box sx={{ display: "flex", alignItems: "center", mr: 1 }}>
@@ -138,6 +201,126 @@ const TodoTable = ({ todos }: any) => {
               ),
             }}
           />
+
+          <Box display="flex" alignItems="center" gap={2}>
+            <ToggleButtonGroup
+              value={statusFilter}
+              exclusive
+              onChange={handleStatusFilterChange}
+              aria-label="task status filter"
+              size="small"
+              sx={{
+                "& .MuiToggleButton-root": {
+                  px: 2,
+                  py: 1,
+                  borderColor: "divider",
+                  "&.Mui-selected": {
+                    backgroundColor: "action.selected",
+                  },
+                },
+              }}
+            >
+              <ToggleButton value="all" aria-label="all tasks">
+                <Typography variant="body2">All</Typography>
+              </ToggleButton>
+              <ToggleButton value="pending" aria-label="pending tasks">
+                <Box display="flex" alignItems="center" gap={0.5}>
+                  <PendingActions fontSize="small" />
+                  <Typography variant="body2">Pending</Typography>
+                </Box>
+              </ToggleButton>
+              <ToggleButton value="completed" aria-label="completed tasks">
+                <Box display="flex" alignItems="center" gap={0.5}>
+                  <CheckCircle fontSize="small" />
+                  <Typography variant="body2">Completed</Typography>
+                </Box>
+              </ToggleButton>
+            </ToggleButtonGroup>
+
+            {/* Enhanced Sort Dropdown */}
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={handleSortClick}
+              startIcon={<SwapVertIcon />}
+              endIcon={
+                showPendingFirst ? (
+                  <ArrowUpward fontSize="small" />
+                ) : (
+                  <ArrowDownward fontSize="small" />
+                )
+              }
+              sx={{
+                px: 2,
+                py: 1,
+                textTransform: "none",
+                borderRadius: "8px",
+                borderColor: "divider",
+                "&:hover": {
+                  backgroundColor: "action.hover",
+                },
+              }}
+            >
+              <Typography variant="body2">
+                {showPendingFirst ? "Pending First" : "Completed First"}
+              </Typography>
+            </Button>
+
+            <Menu
+              anchorEl={sortAnchorEl}
+              open={sortOpen}
+              onClose={handleSortClose}
+              MenuListProps={{
+                "aria-labelledby": "sort-button",
+              }}
+              PaperProps={{
+                sx: {
+                  mt: 1,
+                  minWidth: 200,
+                  boxShadow: 2,
+                  borderRadius: "8px",
+                },
+              }}
+            >
+              <MenuItem
+                onClick={() => handleSortSelection("pendingFirst")}
+                selected={showPendingFirst}
+                sx={{
+                  "&.Mui-selected": {
+                    backgroundColor: "action.selected",
+                  },
+                }}
+              >
+                <ListItemIcon>
+                  <ArrowUpward fontSize="small" />
+                </ListItemIcon>
+                <Typography variant="body2">Pending First</Typography>
+              </MenuItem>
+              <MenuItem
+                onClick={() => handleSortSelection("completedFirst")}
+                selected={!showPendingFirst}
+                sx={{
+                  "&.Mui-selected": {
+                    backgroundColor: "action.selected",
+                  },
+                }}
+              >
+                <ListItemIcon>
+                  <ArrowDownward fontSize="small" />
+                </ListItemIcon>
+                <Typography variant="body2">Completed First</Typography>
+              </MenuItem>
+            </Menu>
+          </Box>
+        </Box>
+
+        {/* Task Count Summary */}
+        <Box mb={2}>
+          <Typography variant="subtitle2" color="text.secondary">
+            Showing {filteredTodos.length} tasks (
+            {selectedTodos.filter((t: any) => !t.completed).length} pending,{" "}
+            {selectedTodos.filter((t: any) => t.completed).length} completed)
+          </Typography>
         </Box>
 
         <Grid container spacing={4}>
@@ -154,6 +337,9 @@ const TodoTable = ({ todos }: any) => {
                     boxShadow: 6,
                   },
                   cursor: "pointer",
+                  borderLeft: `4px solid ${
+                    todo.completed ? "#4caf50" : "#ff9800"
+                  }`,
                 }}
                 onClick={() => navigate(`/todos/${todo?.id}`)}
               >
@@ -171,6 +357,8 @@ const TodoTable = ({ todos }: any) => {
                       WebkitLineClamp: 2,
                       WebkitBoxOrient: "vertical",
                       textOverflow: "ellipsis",
+                      textDecoration: todo.completed ? "line-through" : "none",
+                      color: todo.completed ? "text.secondary" : "text.primary",
                     }}
                   >
                     {todo.todo}
@@ -215,6 +403,7 @@ const TodoTable = ({ todos }: any) => {
                     label={todo.completed ? "Completed" : "Pending"}
                     color={todo.completed ? "success" : "warning"}
                     size="small"
+                    variant={todo.completed ? "filled" : "outlined"}
                   />
                 </CardActions>
               </Card>
@@ -234,8 +423,7 @@ const TodoTable = ({ todos }: any) => {
         </Box>
       </Container>
 
-      {/* open modals */}
-
+      {/* Modals */}
       <NestedModal
         open={open}
         setOpen={setOpen}
@@ -243,11 +431,6 @@ const TodoTable = ({ todos }: any) => {
         todoTitle={currentTodo?.todo}
         onSave={handleSave}
       />
-      {/* <Notification
-        notifiMessage={"Successfully Deleted"}
-        notifi={notifi}
-        setNotifi={setNotifi}
-      /> */}
       <ConfirmDeleteModal
         open={deleteConfirmOpen}
         onClose={() => setDeleteConfirmOpen(false)}
