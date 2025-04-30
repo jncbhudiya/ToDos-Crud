@@ -22,7 +22,7 @@ import { Lightbulb, TaskAlt } from "@mui/icons-material";
 import { showNotification } from "../Notification/notification";
 import styles from "./ToDoList.module.scss";
 import TodoTable from "../TodoTable/todoTable";
-export default function TodosList() {
+const TodosList = () => {
   const [todos, setTodos] = useState<any[]>([]);
   const [openAddTodo, setOpenAddTodo] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -163,4 +163,5 @@ export default function TodosList() {
       </Card>
     </Container>
   );
-}
+};
+export default TodosList;
