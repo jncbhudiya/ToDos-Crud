@@ -1,9 +1,9 @@
-import TodosList from "../components/toDoList/ToDoList";
+import TodoList from "../components/ToDoList/ToDoList";
 
 export default function TodosPage() {
   return (
     <>
-      <TodosList />
+      <TodoList />
     </>
   );
 }
