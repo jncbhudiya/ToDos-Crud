@@ -3,10 +3,9 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useNavigate,
+
 } from "react-router-dom";
 import "./App.css";
-import { Button, Container } from "@mui/material";
 import Home from "./components/Home/home";
 import GlobalLoader from "./components/GlobalLoader/GlobalLoader";
 import Notification from "./components/Notification/notification";

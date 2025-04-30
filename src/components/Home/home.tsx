@@ -1,8 +1,7 @@
 import React from "react";
-import { Container, Typography, Box, Button } from "@mui/material";
+import { Container, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline"; // Optional: Hero icon
-import { style } from "@mui/system";
 import styles from "./Home.module.scss";
 export default function Home() {
   const navigate = useNavigate();
