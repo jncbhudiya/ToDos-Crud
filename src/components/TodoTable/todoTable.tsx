@@ -65,7 +65,6 @@ const TodoTable = ({ todos }: any) => {
     setPage(newPage);
   };
 
-  // Filter and sort todos
   const filteredTodos = selectedTodos
     .filter((todo: any) =>
       todo.todo.toLowerCase().includes(searchQuery.toLowerCase())
@@ -139,7 +138,7 @@ const TodoTable = ({ todos }: any) => {
   ) => {
     if (newFilter !== null) {
       setStatusFilter(newFilter);
-      setPage(0); // Reset to first page when filter changes
+      setPage(0);
     }
   };
   const [sortAnchorEl, setSortAnchorEl] = useState<null | HTMLElement>(null);
@@ -192,7 +191,7 @@ const TodoTable = ({ todos }: any) => {
             className={styles.searchInput}
             InputProps={{
               startAdornment: (
-                <Box className={styles.searchIconWrapper}>
+                <Box sx={{ mr: 1, display: "flex", alignItems: "center" }}>
                   <SearchIcon color="action" />
                 </Box>
               ),

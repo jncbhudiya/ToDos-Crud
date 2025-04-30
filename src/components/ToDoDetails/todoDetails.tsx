@@ -10,14 +10,15 @@ import {
   Alert,
   Chip,
   Divider,
+  Stack,
 } from "@mui/material";
-import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import EditIcon from "@mui/icons-material/DriveFileRenameOutline";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import EditIcon from "@mui/icons-material/Edit";
 import { useLoader } from "../../context/LoaderContext";
 import { getTodoById } from "../../api/todosApi";
 import styles from "./ToDoDetails.module.scss";
+
 interface Todo {
   id: number;
   todo: string;
@@ -45,6 +46,7 @@ export default function TodoDetails() {
       setError("Failed to fetch todo details");
       console.error("Error fetching todo:", err);
     } finally {
+      setLoading(false);
       hideLoader();
     }
   };
@@ -53,19 +55,24 @@ export default function TodoDetails() {
     fetchTodo();
   }, [id]);
 
-  const handleBack = () => {
-    navigate(-1);
-  };
-
-  const handleEdit = () => {
-    navigate(`/todos/${id}/edit`);
-  };
+  const handleBack = () => navigate(-1);
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
-      <Button startIcon={<ArrowBackIcon />} onClick={handleBack} sx={{ mb: 3 }}>
-        Back to List
-      </Button>
+    <Container maxWidth="sm" sx={{ mt: 6, mb: 6 }}>
+      <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={handleBack}
+          variant="outlined"
+        >
+          Back
+        </Button>
+        {todo && (
+          <Button startIcon={<EditIcon />} variant="contained" color="primary">
+            Edit Todo
+          </Button>
+        )}
+      </Stack>
 
       {error && (
         <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
@@ -73,38 +80,51 @@ export default function TodoDetails() {
         </Alert>
       )}
 
-      {todo ? (
-        <Card sx={{ boxShadow: 3 }}>
+      {loading ? (
+        <Box display="flex" justifyContent="center" mt={10}>
+          <CircularProgress />
+        </Box>
+      ) : todo ? (
+        <Card elevation={4}>
           <CardContent>
-            <Box className={styles.container}>
-              <Typography variant="h4" component="h1">
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={2}
+            >
+              <Typography variant="h5" fontWeight="bold">
                 Todo Details
               </Typography>
               <Chip
                 label={todo.completed ? "Completed" : "Pending"}
                 color={todo.completed ? "success" : "warning"}
+                variant="outlined"
               />
             </Box>
 
             <Divider sx={{ my: 2 }} />
 
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              <h2>Title:</h2>
+            <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+              Title
             </Typography>
             <Typography
               variant="body1"
-              className={`todo-text ${todo.completed ? "completed" : ""}`}
+              className={`${styles.todoText} ${
+                todo.completed ? styles.completed : ""
+              }`}
+              sx={{ mb: 3 }}
             >
               {todo.todo}
             </Typography>
 
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              <h3>Status:</h3>
+            <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+              Status
             </Typography>
-            <Typography variant="body1" sx={{ pl: 2, mb: 3 }}>
+            <Typography variant="body2" sx={{ pl: 1 }}>
               {todo.completed
-                ? "This task has been completed"
-                : "This task is still pending"}
+                ? "This task has been marked as completed."
+                : "This task is still pending."}
             </Typography>
           </CardContent>
         </Card>
