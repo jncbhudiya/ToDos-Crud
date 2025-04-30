@@ -1,4 +1,4 @@
-import TodosList from "../components/ToDoList/ToDoList";
+import TodosList from "../components/toDoList/ToDoList";
 
 export default function TodosPage() {
   return (
