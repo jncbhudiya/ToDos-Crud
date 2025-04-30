@@ -2,7 +2,7 @@
 import axios from "axios";
 import { Todo } from "../types/todoTypes";
 import { dispatch } from "../redux/store/apiStore";
-import { showNotification } from "../components/notification";
+import { showNotification } from "../components/Notification/notification";
 
 const handleError = (error: any) => {
   const errorMessage = error.response?.data?.message || "An error occurred";

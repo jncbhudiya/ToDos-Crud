@@ -7,8 +7,8 @@ import {
   Box,
   CircularProgress,
 } from "@mui/material";
-import { addTodo } from "../api/todosApi";
-import { Todo } from "../types/todoTypes";
+import { addTodo } from "../../api/todosApi";
+import { Todo } from "../../types/todoTypes";
 
 interface AddTodoProps {
   onClose: () => void;
@@ -68,7 +68,7 @@ export default function AddTodo({ onClose, setTodos, todos }: AddTodoProps) {
       </Button>
 
       <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
-        <Button variant="outlined" color="secondary" onClick={onClose}>
+        <Button variant="outlined" color="primary" onClick={onClose}>
           Cancel
         </Button>
         <Button

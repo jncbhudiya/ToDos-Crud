@@ -1,7 +1,7 @@
 // src/components/GlobalLoader.tsx
 import React from "react";
 import { Backdrop, CircularProgress } from "@mui/material";
-import { useLoader } from "../context/LoaderContext";
+import { useLoader } from "../../context/LoaderContext";
 
 const GlobalLoader = () => {
   const { loading } = useLoader();

@@ -14,13 +14,13 @@ import {
   Skeleton,
   Tooltip,
 } from "@mui/material";
-import TodoTable from "../components/todoTable";
-import AddTodo from "../components/addTodo";
+import TodoTable from "../TodoTable/todoTable";
+import AddTodo from "../AddTodo/addTodo";
 import AddIcon from "@mui/icons-material/Add";
-import { getTodos } from "../api/todosApi";
-import { useLoader } from "../context/LoaderContext";
+import { getTodos } from "../../api/todosApi";
+import { useLoader } from "../../context/LoaderContext";
 import { Lightbulb, TaskAlt } from "@mui/icons-material";
-import { showNotification } from "../components/notification";
+import { showNotification } from "../Notification/notification";
 
 export default function TodosList() {
   const [todos, setTodos] = useState<any[]>([]);

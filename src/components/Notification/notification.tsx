@@ -19,7 +19,6 @@ export default function Notification() {
   );
 }
 
-// Export toast function to be used elsewhere
 export const showNotification = (
   message: string,
   type: "success" | "error" | "info" | "warning" = "success"

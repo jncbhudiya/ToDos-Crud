@@ -28,12 +28,12 @@ import {
 
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import NestedModal from "./modal";
+import NestedModal from "../EditModal/Editmodal";
 import { useNavigate } from "react-router-dom";
-import ConfirmDeleteModal from "./ConfirmDeleteModal";
+import ConfirmDeleteModal from "../DeleteModal/ConfirmDeleteModal";
 import SearchIcon from "@mui/icons-material/Search";
-import { deleteTodo, updateTodo } from "../api/todosApi";
-import { Todo } from "../types/todoTypes";
+import { deleteTodo, updateTodo } from "../../api/todosApi";
+import { Todo } from "../../types/todoTypes";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
 import {

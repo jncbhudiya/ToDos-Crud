@@ -9,9 +9,9 @@ import "./App.css";
 import TodoDetails from "./pages/todoDetails";
 import TodosPage from "./pages/todoList";
 import { Button, Container } from "@mui/material";
-import Home from "./components/home";
-import GlobalLoader from "./components/GlobalLoader";
-import Notification from "./components/notification";
+import Home from "./components/Home/home";
+import GlobalLoader from "./components/GlobalLoader/GlobalLoader";
+import Notification from "./components/Notification/notification";
 
 function App() {
   return (

@@ -15,8 +15,9 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import EditIcon from "@mui/icons-material/DriveFileRenameOutline";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { getTodoById } from "../api/todosApi";
-import { useLoader } from "../context/LoaderContext";
+import { useLoader } from "../../context/LoaderContext";
+import { getTodoById } from "../../api/todosApi";
+
 
 interface Todo {
   id: number;

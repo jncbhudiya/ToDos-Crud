@@ -37,12 +37,11 @@ export default function NestedModal({
   const handleClose = () => {
     setOpen(false);
   };
-  
 
   const handleSave = async () => {
     setLoading(true);
     try {
-      await onSave(title, status === "completed"); 
+      await onSave(title, status === "completed");
       handleClose();
     } catch (error) {
       console.error("Error saving todo:", error);
