@@ -20,8 +20,8 @@ import { getTodos } from "../../api/todosApi";
 import { useLoader } from "../../context/LoaderContext";
 import { Lightbulb, TaskAlt } from "@mui/icons-material";
 import { showNotification } from "../Notification/notification";
-import TodoTable from "../TodoTable/ToDoTable";
 import styles from "./ToDoList.module.scss";
+import TodoTable from "../TodoTable/todoTable";
 export default function TodosList() {
   const [todos, setTodos] = useState<any[]>([]);
   const [openAddTodo, setOpenAddTodo] = useState(false);
