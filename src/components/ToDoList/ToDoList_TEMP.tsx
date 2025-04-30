@@ -14,7 +14,7 @@ import {
   Skeleton,
   Tooltip,
 } from "@mui/material";
-import AddTodo from "../AddTodo/AddTodo";
+import AddTodo from "../AddTodo/AddTodo_temp";
 import AddIcon from "@mui/icons-material/Add";
 import { getTodos } from "../../api/todosApi";
 import { useLoader } from "../../context/LoaderContext";
