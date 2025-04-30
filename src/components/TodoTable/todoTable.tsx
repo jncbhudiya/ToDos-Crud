@@ -42,6 +42,7 @@ import {
   CheckCircle,
   PendingActions,
 } from "@mui/icons-material";
+import styles from "./ToDoTable.module.scss";
 
 const TodoTable = ({ todos }: any) => {
   // states
@@ -56,7 +57,6 @@ const TodoTable = ({ todos }: any) => {
   const [statusFilter, setStatusFilter] = useState<
     "all" | "completed" | "pending"
   >("all");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   const [page, setPage] = useState(0);
   const rowsPerPage = 10;
@@ -157,10 +157,7 @@ const TodoTable = ({ todos }: any) => {
     setPage(0);
     handleSortClose();
   };
-  const toggleSortOrder = () => {
-    setShowPendingFirst(!showPendingFirst);
-    setPage(0); // Reset to first page when sort changes
-  };
+
   useEffect(() => {
     setSelectedTodos(todos);
   }, [todos]);
@@ -190,12 +187,12 @@ const TodoTable = ({ todos }: any) => {
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
-              setPage(0); // Reset to first page when search changes
+              setPage(0);
             }}
-            sx={{ width: "100%", maxWidth: 400 }}
+            className={styles.searchInput}
             InputProps={{
               startAdornment: (
-                <Box sx={{ display: "flex", alignItems: "center", mr: 1 }}>
+                <Box className={styles.searchIconWrapper}>
                   <SearchIcon color="action" />
                 </Box>
               ),
@@ -209,16 +206,7 @@ const TodoTable = ({ todos }: any) => {
               onChange={handleStatusFilterChange}
               aria-label="task status filter"
               size="small"
-              sx={{
-                "& .MuiToggleButton-root": {
-                  px: 2,
-                  py: 1,
-                  borderColor: "divider",
-                  "&.Mui-selected": {
-                    backgroundColor: "action.selected",
-                  },
-                },
-              }}
+              className={styles.togglebuttongroup}
             >
               <ToggleButton value="all" aria-label="all tasks">
                 <Typography variant="body2">All</Typography>
@@ -250,16 +238,7 @@ const TodoTable = ({ todos }: any) => {
                   <ArrowDownward fontSize="small" />
                 )
               }
-              sx={{
-                px: 2,
-                py: 1,
-                textTransform: "none",
-                borderRadius: "8px",
-                borderColor: "divider",
-                "&:hover": {
-                  backgroundColor: "action.hover",
-                },
-              }}
+              className={styles.button}
             >
               <Typography variant="body2">
                 {showPendingFirst ? "Pending First" : "Completed First"}
@@ -273,14 +252,7 @@ const TodoTable = ({ todos }: any) => {
               MenuListProps={{
                 "aria-labelledby": "sort-button",
               }}
-              PaperProps={{
-                sx: {
-                  mt: 1,
-                  minWidth: 200,
-                  boxShadow: 2,
-                  borderRadius: "8px",
-                },
-              }}
+              className={styles.menuPaper}
             >
               <MenuItem
                 onClick={() => handleSortSelection("pendingFirst")}
@@ -327,40 +299,14 @@ const TodoTable = ({ todos }: any) => {
           {paginatedTodos?.map((todo: any) => (
             <Grid size={{ xs: 12, md: 4, sm: 6 }} key={todo.id}>
               <Card
-                sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  transition: "0.3s",
-                  "&:hover": {
-                    transform: "scale(1.02)",
-                    boxShadow: 6,
-                  },
-                  cursor: "pointer",
-                  borderLeft: `4px solid ${
-                    todo.completed ? "#4caf50" : "#ff9800"
-                  }`,
-                }}
+                className={styles.card}
                 onClick={() => navigate(`/todos/${todo?.id}`)}
               >
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Typography variant="subtitle2" color="text.secondary">
                     ID: {todo.id}
                   </Typography>
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      mt: 1,
-                      fontWeight: 500,
-                      overflow: "hidden",
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                      textOverflow: "ellipsis",
-                      textDecoration: todo.completed ? "line-through" : "none",
-                      color: todo.completed ? "text.secondary" : "text.primary",
-                    }}
-                  >
+                  <Typography variant="h6" className={styles.typography}>
                     {todo.todo}
                   </Typography>
                 </CardContent>

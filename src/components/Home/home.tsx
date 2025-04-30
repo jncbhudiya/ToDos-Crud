@@ -2,23 +2,13 @@ import React from "react";
 import { Container, Typography, Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline"; // Optional: Hero icon
-
+import { style } from "@mui/system";
+import styles from "./Home.module.scss";
 export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <Container
-      maxWidth="md"
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-        textAlign: "center",
-        px: 3,
-      }}
-    >
+    <Container maxWidth="md" className={styles.container}>
       <CheckCircleOutlineIcon
         sx={{ fontSize: 80, color: "primary.main", mb: 3 }}
       />
@@ -37,15 +27,7 @@ export default function Home() {
         color="primary"
         size="large"
         onClick={() => navigate("/todos")}
-        sx={{
-          px: 5,
-          py: 1.5,
-          borderRadius: "30px",
-          fontWeight: "bold",
-          textTransform: "none",
-          fontSize: "1rem",
-          boxShadow: 3,
-        }}
+        className={styles.customButton}
       >
         Go to Todos
       </Button>

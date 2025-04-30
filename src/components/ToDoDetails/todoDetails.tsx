@@ -17,8 +17,7 @@ import EditIcon from "@mui/icons-material/DriveFileRenameOutline";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useLoader } from "../../context/LoaderContext";
 import { getTodoById } from "../../api/todosApi";
-
-
+import styles from "./ToDoDetails.module.scss";
 interface Todo {
   id: number;
   todo: string;
@@ -77,14 +76,7 @@ export default function TodoDetails() {
       {todo ? (
         <Card sx={{ boxShadow: 3 }}>
           <CardContent>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                mb: 2,
-              }}
-            >
+            <Box className={styles.container}>
               <Typography variant="h4" component="h1">
                 Todo Details
               </Typography>
@@ -101,12 +93,7 @@ export default function TodoDetails() {
             </Typography>
             <Typography
               variant="body1"
-              sx={{
-                mb: 3,
-                pl: 2,
-                fontStyle: todo.completed ? "italic" : "normal",
-                textDecoration: todo.completed ? "line-through" : "none",
-              }}
+              className={`todo-text ${todo.completed ? "completed" : ""}`}
             >
               {todo.todo}
             </Typography>

@@ -14,14 +14,14 @@ import {
   Skeleton,
   Tooltip,
 } from "@mui/material";
-import TodoTable from "../TodoTable/todoTable";
-import AddTodo from "../AddTodo/addTodo";
+import AddTodo from "../AddTodo/AddTodo";
 import AddIcon from "@mui/icons-material/Add";
 import { getTodos } from "../../api/todosApi";
 import { useLoader } from "../../context/LoaderContext";
 import { Lightbulb, TaskAlt } from "@mui/icons-material";
 import { showNotification } from "../Notification/notification";
-
+import TodoTable from "../TodoTable/ToDoTable";
+import styles from "./ToDoList.module.scss";
 export default function TodosList() {
   const [todos, setTodos] = useState<any[]>([]);
   const [openAddTodo, setOpenAddTodo] = useState(false);
@@ -53,43 +53,18 @@ export default function TodosList() {
   };
 
   return (
-    <Container
-      maxWidth="lg"
-      sx={{
-        mt: 4,
-        mb: 4,
-        transition: "all 0.3s ease",
-      }}
-    >
+    <Container maxWidth="lg" className={styles.container}>
       {/* Header Section */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 4,
-          flexWrap: "wrap",
-          gap: 2,
-        }}
-      >
+      <Box className={styles.headerSection}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Avatar
-            sx={{
-              bgcolor: theme.palette.primary.main,
-              width: 56,
-              height: 56,
-            }}
-          >
+          <Avatar className={styles.avatarLarge}>
             <TaskAlt fontSize="large" />
           </Avatar>
           <Box>
             <Typography
               variant="h4"
               component="h1"
-              sx={{
-                fontWeight: 700,
-                lineHeight: 1.2,
-              }}
+              className={styles.taskManagerTitle}
             >
               Task Manager
             </Typography>
@@ -103,14 +78,7 @@ export default function TodosList() {
       </Box>
 
       {/* Content Section */}
-      <Card
-        sx={{
-          boxShadow: theme.shadows[1],
-          borderRadius: 3,
-          overflow: "hidden",
-          border: `1px solid ${theme.palette.divider}`,
-        }}
-      >
+      <Card className={styles.todoCard}>
         <CardHeader
           avatar={
             <Avatar sx={{ bgcolor: theme.palette.success.light }}>
@@ -130,32 +98,13 @@ export default function TodosList() {
                 color="primary"
                 startIcon={<AddIcon />}
                 onClick={() => setOpenAddTodo(true)}
-                sx={{
-                  borderRadius: 2,
-                  px: 3,
-                  py: 1,
-                  textTransform: "none",
-                  fontSize: "0.875rem",
-                  fontWeight: 600,
-                  boxShadow: theme.shadows[1],
-                  "&:hover": {
-                    boxShadow: theme.shadows[2],
-                    bgcolor: theme.palette.primary.dark,
-                  },
-                }}
+                className={styles.addTaskButton}
               >
                 Add Task
               </Button>
             </Tooltip>
           }
-          sx={{
-            bgcolor:
-              theme.palette.mode === "dark"
-                ? theme.palette.grey[900]
-                : theme.palette.grey[50],
-            borderBottom: `1px solid ${theme.palette.divider}`,
-            py: 1,
-          }}
+          className={styles.cardHeader}
         />
 
         {loading ? (
@@ -165,12 +114,9 @@ export default function TodosList() {
                 key={index}
                 variant="rectangular"
                 height={60}
-                sx={{
-                  mb: 2,
-                  borderRadius: 1,
-                  bgcolor:
-                    theme.palette.mode === "dark" ? "grey.800" : "grey.100",
-                }}
+                className={`${styles.skeletonItem} ${
+                  theme.palette.mode === "dark" ? styles.dark : styles.light
+                }`}
               />
             ))}
           </Box>
@@ -185,20 +131,7 @@ export default function TodosList() {
               aria-labelledby="add-todo-modal"
               aria-describedby="add-new-todo-item"
             >
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: { xs: "90%", sm: 500 },
-                  bgcolor: "background.paper",
-                  boxShadow: theme.shadows[10],
-                  p: 4,
-                  borderRadius: 3,
-                  outline: "none",
-                }}
-              >
+              <Box className={styles.modalContent}>
                 <AddTodo
                   onClose={handleClose}
                   setTodos={setTodos}
@@ -208,23 +141,8 @@ export default function TodosList() {
             </Modal>
           </>
         ) : (
-          <Box
-            sx={{
-              p: 6,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            <TaskAlt
-              sx={{
-                fontSize: 60,
-                color: theme.palette.text.disabled,
-                mb: 2,
-                opacity: 0.8,
-              }}
-            />
+          <Box className={styles.emptyState}>
+            <TaskAlt className={styles.emptyIcon} />
             <Typography variant="h6" color="text.secondary" gutterBottom>
               Your task list is empty
             </Typography>
@@ -236,12 +154,7 @@ export default function TodosList() {
               color="primary"
               startIcon={<AddIcon />}
               onClick={() => setOpenAddTodo(true)}
-              sx={{
-                borderRadius: 2,
-                px: 3,
-                py: 1.5,
-                textTransform: "none",
-              }}
+              className={styles.createTaskButton}
             >
               Create Task
             </Button>

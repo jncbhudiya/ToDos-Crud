@@ -1,4 +1,4 @@
-import TodoDetails from "../components/ToDoDetails/todoDetails";
+import TodoDetails from "../components/ToDoDetails/ToDoDetails";
 
 export default function TodoDetail() {
   return (

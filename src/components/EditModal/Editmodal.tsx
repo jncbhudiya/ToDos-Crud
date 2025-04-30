@@ -8,20 +8,7 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
-};
+import styles from "./Editmodal.module.scss";
 
 export default function NestedModal({
   open,
@@ -61,7 +48,7 @@ export default function NestedModal({
       onClose={handleClose}
       aria-labelledby="edit-todo-modal-title"
     >
-      <Box sx={style}>
+      <Box className={styles.Box}>
         <Typography id="edit-todo-modal-title" variant="h6" gutterBottom>
           Edit Todo
         </Typography>

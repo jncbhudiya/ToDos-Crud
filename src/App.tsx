@@ -6,12 +6,12 @@ import {
   useNavigate,
 } from "react-router-dom";
 import "./App.css";
-import TodoDetails from "./pages/todoDetails";
-import TodosPage from "./pages/todoList";
 import { Button, Container } from "@mui/material";
 import Home from "./components/Home/home";
 import GlobalLoader from "./components/GlobalLoader/GlobalLoader";
 import Notification from "./components/Notification/notification";
+import TodosPage from "./pages/todoList";
+import TodoDetails from "./pages/todoDetails";
 
 function App() {
   return (

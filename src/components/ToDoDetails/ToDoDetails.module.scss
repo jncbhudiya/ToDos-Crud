@@ -1,0 +1,20 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem; 
+}
+.todo-text {
+  margin-bottom: 1rem; 
+  padding-left: 0.5rem;
+
+  &.completed {
+    font-style: italic;
+    text-decoration: line-through;
+  }
+
+  &:not(.completed) {
+    font-style: normal;
+    text-decoration: none;
+  }
+}
