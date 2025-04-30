@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -6,21 +6,44 @@ import {
   DialogActions,
   Button,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 
 const ConfirmDeleteModal = ({ open, onClose, onConfirm }: any) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleConfirm = async () => {
+    setIsDeleting(true);
+    try {
+      await onConfirm();
+      onClose();
+    } catch (error) {
+      console.error("Deletion failed:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={isDeleting ? undefined : onClose}>
       <DialogTitle>Confirm Deletion</DialogTitle>
       <DialogContent>
         <Typography>Are you sure you want to delete this item?</Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant="outlined">
+        <Button onClick={onClose} variant="outlined" disabled={isDeleting}>
           Cancel
         </Button>
-        <Button onClick={onConfirm} color="error" variant="contained">
-          Delete
+        <Button
+          onClick={handleConfirm}
+          color="error"
+          variant="contained"
+          disabled={isDeleting}
+          startIcon={
+            isDeleting ? <CircularProgress size={20} color="inherit" /> : null
+          }
+        >
+          {isDeleting ? "Deleting..." : "Delete"}
         </Button>
       </DialogActions>
     </Dialog>

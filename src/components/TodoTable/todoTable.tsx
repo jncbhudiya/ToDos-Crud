@@ -74,13 +74,16 @@ const TodoTable = ({ todos }: any) => {
       return statusFilter === "completed" ? todo.completed : !todo.completed;
     })
     .sort((a: any, b: any) => {
-      if (showPendingFirst) {
-        return a.completed === b.completed ? 0 : a.completed ? 1 : -1;
+      if (statusFilter === "all") {
+        return a.id - b.id;
       } else {
-        return a.completed === b.completed ? 0 : a.completed ? -1 : 1;
+        if (showPendingFirst) {
+          return a.completed === b.completed ? 0 : a.completed ? 1 : -1;
+        } else {
+          return a.completed === b.completed ? 0 : a.completed ? -1 : 1;
+        }
       }
     });
-
   const paginatedTodos = filteredTodos.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
@@ -144,19 +147,6 @@ const TodoTable = ({ todos }: any) => {
   const [sortAnchorEl, setSortAnchorEl] = useState<null | HTMLElement>(null);
   const sortOpen = Boolean(sortAnchorEl);
 
-  const handleSortClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setSortAnchorEl(event.currentTarget);
-  };
-  const handleSortClose = () => {
-    setSortAnchorEl(null);
-  };
-
-  const handleSortSelection = (option: "pendingFirst" | "completedFirst") => {
-    setShowPendingFirst(option === "pendingFirst");
-    setPage(0);
-    handleSortClose();
-  };
-
   useEffect(() => {
     setSelectedTodos(todos);
   }, [todos]);
@@ -173,118 +163,72 @@ const TodoTable = ({ todos }: any) => {
           🚀 Task Launchpad
         </Typography>
 
-        {/* Search and Filter Section */}
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          mb={4}
-          alignItems="center"
-        >
-          <TextField
-            variant="outlined"
-            placeholder="Search todos..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setPage(0);
-            }}
-            className={styles.searchInput}
-            InputProps={{
-              startAdornment: (
-                <Box sx={{ mr: 1, display: "flex", alignItems: "center" }}>
-                  <SearchIcon color="action" />
-                </Box>
-              ),
-            }}
-          />
-
-          <Box display="flex" alignItems="center" gap={2}>
-            <ToggleButtonGroup
-              value={statusFilter}
-              exclusive
-              onChange={handleStatusFilterChange}
-              aria-label="task status filter"
-              size="small"
-              className={styles.togglebuttongroup}
-            >
-              <ToggleButton value="all" aria-label="all tasks">
-                <Typography variant="body2">All</Typography>
-              </ToggleButton>
-              <ToggleButton value="pending" aria-label="pending tasks">
-                <Box display="flex" alignItems="center" gap={0.5}>
-                  <PendingActions fontSize="small" />
-                  <Typography variant="body2">Pending</Typography>
-                </Box>
-              </ToggleButton>
-              <ToggleButton value="completed" aria-label="completed tasks">
-                <Box display="flex" alignItems="center" gap={0.5}>
-                  <CheckCircle fontSize="small" />
-                  <Typography variant="body2">Completed</Typography>
-                </Box>
-              </ToggleButton>
-            </ToggleButtonGroup>
-
-            {/* Enhanced Sort Dropdown */}
-            <Button
+        <Box className={styles.searchBox}>
+          {/* Enhanced Search Input */}
+          <Box className={styles.searchContainer}>
+            <TextField
+              fullWidth
               variant="outlined"
-              size="small"
-              onClick={handleSortClick}
-              startIcon={<SwapVertIcon />}
-              endIcon={
-                showPendingFirst ? (
-                  <ArrowUpward fontSize="small" />
-                ) : (
-                  <ArrowDownward fontSize="small" />
-                )
-              }
-              className={styles.button}
-            >
-              <Typography variant="body2">
-                {showPendingFirst ? "Pending First" : "Completed First"}
-              </Typography>
-            </Button>
-
-            <Menu
-              anchorEl={sortAnchorEl}
-              open={sortOpen}
-              onClose={handleSortClose}
-              MenuListProps={{
-                "aria-labelledby": "sort-button",
+              placeholder="Search tasks..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(0);
               }}
-              className={styles.menuPaper}
-            >
-              <MenuItem
-                onClick={() => handleSortSelection("pendingFirst")}
-                selected={showPendingFirst}
-                sx={{
-                  "&.Mui-selected": {
-                    backgroundColor: "action.selected",
+              className={styles.searchInput}
+              InputProps={{
+                startAdornment: (
+                  <Box className={styles.searchIconWrapper}>
+                    <SearchIcon />
+                  </Box>
+                ),
+                sx: {
+                  borderRadius: "8px",
+                  backgroundColor: "background.paper",
+                  "&:hover": {
+                    backgroundColor: "action.hover",
                   },
-                }}
-              >
-                <ListItemIcon>
-                  <ArrowUpward fontSize="small" />
-                </ListItemIcon>
-                <Typography variant="body2">Pending First</Typography>
-              </MenuItem>
-              <MenuItem
-                onClick={() => handleSortSelection("completedFirst")}
-                selected={!showPendingFirst}
-                sx={{
-                  "&.Mui-selected": {
-                    backgroundColor: "action.selected",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "divider",
                   },
-                }}
-              >
-                <ListItemIcon>
-                  <ArrowDownward fontSize="small" />
-                </ListItemIcon>
-                <Typography variant="body2">Completed First</Typography>
-              </MenuItem>
-            </Menu>
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "primary.main",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "primary.main",
+                    borderWidth: "1px",
+                  },
+                },
+              }}
+            />
           </Box>
         </Box>
-
+        <Box className={styles.controlsContainer}>
+          <ToggleButtonGroup
+            value={statusFilter}
+            exclusive
+            onChange={handleStatusFilterChange}
+            aria-label="task status filter"
+            size="small"
+            className={styles.togglebuttongroup}
+          >
+            <ToggleButton value="all" aria-label="all tasks">
+              <Typography variant="body2">All</Typography>
+            </ToggleButton>
+            <ToggleButton value="pending" aria-label="pending tasks">
+              <Box display="flex" alignItems="center" gap={0.5}>
+                <PendingActions fontSize="small" />
+                <Typography variant="body2">Pending</Typography>
+              </Box>
+            </ToggleButton>
+            <ToggleButton value="completed" aria-label="completed tasks">
+              <Box display="flex" alignItems="center" gap={0.5}>
+                <CheckCircle fontSize="small" />
+                <Typography variant="body2">Completed</Typography>
+              </Box>
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
         {/* Task Count Summary */}
         <Box mb={2}>
           <Typography variant="subtitle2" color="text.secondary">

@@ -53,25 +53,24 @@ export default function TodoDetails() {
     }
   };
 
-  const handleSave = async (updatedTitle: string, updatedStatus: boolean) => {
-    if (!todo) return;
+ const handleSave = async (updatedTitle: string, updatedStatus: boolean) => {
+   if (!todo) return;
 
-    try {
-      setLoading(true);
-      const updatedTodo = await updateTodo(
-        todo.id,
-        updatedTitle,
-        updatedStatus
-      );
-      setTodo(updatedTodo);
-      setEditModalOpen(false);
-    } catch (err) {
-      setError("Failed to update todo");
-      console.error("Error updating todo:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+   try {
+     setLoading(true);
+     await updateTodo(todo.id, updatedTitle, updatedStatus);
+
+     setTodo((prev) =>
+       prev ? { ...prev, todo: updatedTitle, completed: updatedStatus } : null
+     );
+     setEditModalOpen(false);
+   } catch (err) {
+     setError("Failed to update todo");
+     console.error("Error updating todo:", err);
+   } finally {
+     setLoading(false);
+   }
+ };
 
   useEffect(() => {
     fetchTodo();

@@ -1,39 +1,74 @@
 @import "./../../styles/variables.scss";
+
 .container {
   margin-top: 1rem;
   margin-bottom: 1rem;
+  padding: 0 1rem;
   transition: all 0.3s ease;
+
+  @media (min-width: 600px) {
+    padding: 0;
+  }
 }
+
 .headerSection {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .avatarLarge {
   background-color: green;
   width: 56px;
   height: 56px;
 }
+
 .taskManagerTitle {
   font-weight: 700;
   line-height: 1.2;
+  font-size: 1.5rem;
+
+  @media (min-width: 600px) {
+    font-size: 2rem;
+  }
 }
+
 .todoCard {
   box-shadow: var(--shadow-1);
   border-radius: 0.75rem;
   overflow: hidden;
   border: 1px solid var(--divider-color);
 }
+
 .addTaskButton {
   border-radius: 16px;
-  padding: 8px 24px;
+  padding: 8px 16px;
   text-transform: none;
   font-size: 0.875rem;
   font-weight: 600;
   box-shadow: var(--shadow-1);
+  width: 100%;
+  margin-top: 1rem;
+
+  @media (min-width: 768px) {
+    width: auto;
+    margin-top: 0;
+    padding: 8px 24px;
+  }
 
   &:hover {
     box-shadow: var(--shadow-2);
@@ -42,9 +77,18 @@
 }
 
 .cardHeader {
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding: 16px;
   border-bottom: 1px solid var(--divider-color);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  @media (min-width: 600px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+  }
 
   &.light {
     background-color: var(--grey-50);
@@ -54,6 +98,18 @@
     background-color: var(--grey-900);
   }
 }
+
+.cardHeaderContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cardHeaderActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .skeletonWrapper {
   padding: 1.5rem;
 }
@@ -71,6 +127,7 @@
     background-color: var(--grey-800);
   }
 }
+
 .modalContent {
   position: absolute;
   top: 50%;
@@ -78,33 +135,50 @@
   transform: translate(-50%, -50%);
   background-color: var(--white);
   box-shadow: var(--shadow-10);
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 0.75rem;
   outline: none;
-
   width: 90%;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
 
   @media (min-width: 600px) {
     width: 500px;
+    padding: 2rem;
   }
 }
 
 .emptyState {
-  padding: 3rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+
+  @media (min-width: 600px) {
+    padding: 3rem;
+  }
 }
 
 .emptyIcon {
-  font-size: 60px;
+  font-size: 3rem;
   color: var(--text-disabled);
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   opacity: 0.8;
+
+  @media (min-width: 600px) {
+    font-size: 4rem;
+  }
 }
+
 .createTaskButton {
   border-radius: 16px;
   padding: 12px 24px;
   text-transform: none;
+  width: 100%;
+
+  @media (min-width: 600px) {
+    width: auto;
+  }
 }
