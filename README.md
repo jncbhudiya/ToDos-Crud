@@ -8,7 +8,7 @@ A modern **React.js** application to manage todo tasks using **Create, Read, Upd
 
 ## 🚀 Live Preview
 
-[https://your-vercel-app.vercel.app](https://your-vercel-app.vercel.app)  
+[https://to-dos-crud-8u4n.vercel.app/](https://to-dos-crud-8u4n.vercel.app/)  
 _(Replace with your actual deployed URL)_
 
 ---
