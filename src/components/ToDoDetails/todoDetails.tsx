@@ -16,8 +16,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
 import { useLoader } from "../../context/LoaderContext";
-import { getTodoById } from "../../api/todosApi";
+import { getTodoById, updateTodo } from "../../api/todosApi";
 import styles from "./ToDoDetails.module.scss";
+import NestedModal from "../EditModal/Editmodal";
 
 interface Todo {
   id: number;
@@ -30,6 +31,7 @@ export default function TodoDetails() {
   const [todo, setTodo] = useState<Todo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const { showLoader, hideLoader } = useLoader();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -51,6 +53,26 @@ export default function TodoDetails() {
     }
   };
 
+  const handleSave = async (updatedTitle: string, updatedStatus: boolean) => {
+    if (!todo) return;
+
+    try {
+      setLoading(true);
+      const updatedTodo = await updateTodo(
+        todo.id,
+        updatedTitle,
+        updatedStatus
+      );
+      setTodo(updatedTodo);
+      setEditModalOpen(false);
+    } catch (err) {
+      setError("Failed to update todo");
+      console.error("Error updating todo:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchTodo();
   }, [id]);
@@ -68,7 +90,12 @@ export default function TodoDetails() {
           Back
         </Button>
         {todo && (
-          <Button startIcon={<EditIcon />} variant="contained" color="primary">
+          <Button
+            startIcon={<EditIcon />}
+            variant="contained"
+            color="primary"
+            onClick={() => setEditModalOpen(true)}
+          >
             Edit Todo
           </Button>
         )}
@@ -133,6 +160,14 @@ export default function TodoDetails() {
           Todo not found
         </Typography>
       )}
+
+      <NestedModal
+        open={editModalOpen}
+        setOpen={setEditModalOpen}
+        todoStatus={todo?.completed}
+        todoTitle={todo?.todo}
+        onSave={handleSave}
+      />
     </Container>
   );
 }
