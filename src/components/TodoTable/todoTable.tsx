@@ -45,7 +45,6 @@ import {
 import styles from "./ToDoTable.module.scss";
 
 const TodoTable = ({ todos }: any) => {
-  // states
   const [open, setOpen] = useState(false);
   const [selectedTodos, setSelectedTodos] = useState(todos);
   const [currentTodo, setCurrentTodo] = useState<any>(null);
@@ -162,9 +161,8 @@ const TodoTable = ({ todos }: any) => {
         >
           🚀 Task Launchpad
         </Typography>
-
+        {/* search and sorting */}
         <Box className={styles.searchBox}>
-          {/* Enhanced Search Input */}
           <Box className={styles.searchContainer}>
             <TextField
               fullWidth
